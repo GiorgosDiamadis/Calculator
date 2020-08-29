@@ -1,11 +1,25 @@
 from stack import Stack
 
-precedence = {
+precedence_in = {
+    '+': 2,
+    '-': 2,
+    '*': 4,
+    '/': 4,
+    '^': 5,
+    '(': 0,
+    ')': 0
+}
+
+precedence_out = {
     '+': 1,
     '-': 1,
-    '*': 2,
-    '/': 2
+    '*': 3,
+    '/': 3,
+    '^': 6,
+    '(': 7,
+    ')': 0
 }
+
 
 operation = {
     '+': lambda a, b: a+b,
@@ -22,7 +36,7 @@ def infix_to_posfix(expression):
     i = 0
 
     while i < len(expression):
-        if not precedence.__contains__(expression[i]):
+        if not precedence_in.__contains__(expression[i]):
             postfix += expression[i]
             i += 1
         else:
@@ -30,13 +44,15 @@ def infix_to_posfix(expression):
                 stack.push(expression[i])
                 i += 1
             else:
-                if precedence[expression[i]] > precedence[stack.peek()]:
+                if precedence_out[expression[i]] > precedence_in[stack.peek()]:
                     stack.push(expression[i])
                     i += 1
+                elif precedence_out[expression[i]] == precedence_in[stack.peek()]:
+                    stack.pop()
                 else:
                     postfix += stack.pop()
 
-    while not stack.is_empty():
+    while not stack.is_empty() and stack.peek() != ')':
         postfix += stack.pop()
     return postfix
 

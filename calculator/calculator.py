@@ -112,16 +112,32 @@ def evaluate(posfix, numbers):
     return result
 
 
-def calc_math_functions(expression):
+def calc(expression, func):
     x = ""
+    i = expression.index(func.__name__)
+    i += len(func.__name__) + 1
+    while expression[i] != ")":
+        x += expression[i]
+        i += 1
+    expression = expression.replace(
+        func.__name__ + "("+x+")", str(func(math.radians(float(x)))))
+
+    return expression
+
+
+def calc_math_functions(expression):
+    if "sinh" in expression:
+        expression = calc(expression, math.sinh)
+    if "cosh" in expression:
+        expression = calc(expression, math.cosh)
+    if "tanh" in expression:
+        expression = calc(expression, math.tanh)
     if "sin" in expression:
-        i = expression.index("sin")
-        i += 4
-        while expression[i] != ")":
-            x += expression[i]
-            i += 1
-        expression = expression.replace(
-            "sin("+x+")", str(math.sin(math.radians(float(x)))))
+        expression = calc(expression, math.sin)
+    if "cos" in expression:
+        expression = calc(expression, math.cos)
+    if "tan" in expression:
+        expression = calc(expression, math.tan)
 
     return expression
 

@@ -1,4 +1,5 @@
 from stack import Stack
+import math
 
 in_pre = {
     '+': 2,
@@ -63,7 +64,7 @@ def find_numbers(expression):
     numbers = []
     i = 0
     for char in expression:
-        if char.isdigit():
+        if not in_pre.__contains__(char):
             i += 1
         else:
             if i > 0:
@@ -78,20 +79,25 @@ def find_numbers(expression):
 
 def evaluate(posfix, numbers):
     stack_num = Stack()
-    stack_oper = Stack()
+
     k = 0
     i = 0
+
     num = ""
     result = 0
+
     while i < len(posfix):
         if not in_pre.__contains__(posfix[i]):
+
             if k == 0:
                 for j in range(numbers[k]):
                     num += posfix[j]
             else:
                 for j in range(i, i + numbers[k]):
                     num += posfix[j]
+
             stack_num.push(float(num))
+
             i += numbers[k]
             k += 1
             num = ""
@@ -106,9 +112,24 @@ def evaluate(posfix, numbers):
     return result
 
 
+def calc_math_functions(expression):
+    x = ""
+    if "sin" in expression:
+        i = expression.index("sin")
+        i += 4
+        while expression[i] != ")":
+            x += expression[i]
+            i += 1
+        expression = expression.replace(
+            "sin("+x+")", str(math.sin(math.radians(float(x)))))
+
+    return expression
+
+
 def main():
     while 1:
         expression = input("Enter expression\n")
+        expression = calc_math_functions(expression)
         posfix = infix_to_posfix(expression)
         numbers = find_numbers(expression)
         res = evaluate(posfix, numbers)
